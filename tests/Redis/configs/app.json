@@ -1,0 +1,23 @@
+{
+  "logstash": {
+    "redis": {
+      "connections": {
+        "name": [
+          "local"
+        ]
+      }
+    }
+  },
+  "redis": {
+    "connections": {
+      "local": {
+        "host": "localhost",
+        "port": 6380
+      },
+      "not_available": {
+        "host": "not_available",
+        "port": 65535
+      }
+    }
+  }
+}
