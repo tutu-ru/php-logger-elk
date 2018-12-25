@@ -30,7 +30,9 @@ abstract class RedisBaseTest extends BaseTest
 
     protected function getRedisTransport(): RedisTransport
     {
-        return new RedisTransport(new RedisTransportConfig($this->config), $this->connectionManager);
+        $config = new RedisTransportConfig($this->config);
+        $list = $this->connectionManager->createHaPushListGroup($config->getListName(), $config->getConnectionNames());
+        return new RedisTransport($list);
     }
 
 

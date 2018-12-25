@@ -5,5 +5,4 @@ namespace TutuRu\LoggerElk;
 
 interface TransportNotAvailableExceptionInterface
 {
-    public function getTransportName(): string;
 }

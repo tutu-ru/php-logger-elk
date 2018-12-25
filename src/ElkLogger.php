@@ -4,16 +4,12 @@ declare(strict_types=1);
 namespace TutuRu\LoggerElk;
 
 use Psr\Log\AbstractLogger;
-use TutuRu\Metrics\MetricNameUtils;
-use TutuRu\Metrics\MetricsAwareInterface;
-use TutuRu\Metrics\MetricsAwareTrait;
-use TutuRu\Metrics\SessionNames;
+use TutuRu\Metrics\MetricAwareInterface;
+use TutuRu\Metrics\MetricAwareTrait;
 
-class ElkLogger extends AbstractLogger implements MetricsAwareInterface
+class ElkLogger extends AbstractLogger implements MetricAwareInterface
 {
-    use MetricsAwareTrait;
-
-    public const METRIC_PREFIX = 'low_level.log_elastic.';
+    use MetricAwareTrait;
 
     /** @var string */
     private $log;
@@ -24,6 +20,8 @@ class ElkLogger extends AbstractLogger implements MetricsAwareInterface
     /** @var TransportInterface */
     private $transport;
 
+    private $defaultMetricTags = [];
+
 
     public function __construct(
         string $log,
@@ -33,6 +31,10 @@ class ElkLogger extends AbstractLogger implements MetricsAwareInterface
         $this->log = $log;
         $this->transport = $transport;
         $this->messageProcessor = $messageProcessor;
+        $this->defaultMetricTags = [
+            'log'       => $this->log,
+            'transport' => $this->transport->getName(),
+        ];
     }
 
 
@@ -51,19 +53,20 @@ class ElkLogger extends AbstractLogger implements MetricsAwareInterface
         try {
             $this->transport->send($message);
         } catch (TransportNotAvailableExceptionInterface $e) {
-            $this->sendMetricsAboutError($e->getTransportName() . '_not_available');
+            $this->sendMetricsAboutError('not_available');
         } catch (\Exception $e) {
             $this->sendMetricsAboutError('save_exception');
         }
     }
 
 
-    private function sendMetricsAboutError(string $name)
+    private function sendMetricsAboutError(string $error)
     {
-        if (!is_null($this->metricsSessionRegistry)) {
-            $this->metricsSessionRegistry->getRequestedSessionOrNull(SessionNames::NAME_GARBAGE)
-                ->increment(self::METRIC_PREFIX . $name)
-                ->increment(self::METRIC_PREFIX . MetricNameUtils::prepareMetricName($this->log) . $name);
+        if (!is_null($this->statsdExporterClient)) {
+            $this->statsdExporterClient->increment(
+                'log_elk_error',
+                array_merge($this->defaultMetricTags, ['error' => $error])
+            );
         }
     }
 }

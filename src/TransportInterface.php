@@ -5,6 +5,8 @@ namespace TutuRu\LoggerElk;
 
 interface TransportInterface
 {
+    public function getName(): string;
+
     /**
      * @param string $message
      *

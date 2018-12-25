@@ -7,6 +7,12 @@ use TutuRu\LoggerElk\TransportInterface;
 
 class ErrorLogTransport implements TransportInterface
 {
+    public function getName(): string
+    {
+        return 'error_log';
+    }
+
+
     public function send(string $message): void
     {
         $message = str_replace("\n", "   _/|\_   ", $message);

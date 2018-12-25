@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace TutuRu\LoggerElk\Redis;
 
 use TutuRu\Config\ConfigContainer;
-use TutuRu\LoggerElk\ElkLogger;
 
 class RedisTransportConfig
 {
-    public const METRIC_PREFIX = ElkLogger::METRIC_PREFIX;
-
     /** @var ConfigContainer */
     private $config;
 
@@ -17,6 +14,12 @@ class RedisTransportConfig
     public function __construct(ConfigContainer $config)
     {
         $this->config = $config;
+    }
+
+
+    public function getListName(): string
+    {
+        return 'logs-list';
     }
 
 
