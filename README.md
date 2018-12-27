@@ -1,5 +1,31 @@
 # Библиотека LoggerElk
 
+Реализация PSR-3
+
+## error_log
+
+```php
+use TutuRu\LoggerElk\ElkLoggerFactory;
+
+$loggerFactory = new ElkLoggerFactory();
+$logger = $loggerFactory->getNativeErrorLogger($logName);
+```
+
+## Пуш логов в Redis
+
+```php
+use TutuRu\LoggerElk\ElkLoggerFactory;
+
+$loggerFactory = new ElkLoggerFactory();
+$logger = $loggerFactory->getRedisLogger(
+    $logName,
+    $configContainer,
+    $redisConnectionManager,
+    $requestMetadataOrNull,
+    $StatsdExporterClientOrNull
+);
+```
+
 ## Тестирование
 
 Для полного прогона тестов необходим запущенный сервер redis.
