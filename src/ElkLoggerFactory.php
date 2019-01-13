@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TutuRu\LoggerElk;
 
-use TutuRu\Config\ConfigContainer;
+use TutuRu\Config\ConfigInterface;
 use TutuRu\Config\EnvironmentUtils;
 use TutuRu\LoggerElk\ErrorLog\ErrorLogMessageProcessor;
 use TutuRu\LoggerElk\ErrorLog\ErrorLogTransport;
@@ -39,7 +39,7 @@ class ElkLoggerFactory
 
     public function getRedisLogger(
         string $log,
-        ConfigContainer $config,
+        ConfigInterface $config,
         ConnectionManager $connectionManager,
         ?RequestMetadata $requestMetadata = null,
         ?StatsdExporterClientInterface $statsdExporterClient = null

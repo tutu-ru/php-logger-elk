@@ -36,7 +36,7 @@ class RedisTransportTest extends RedisBaseTest
 
     public function testNotAvailableServer()
     {
-        $this->config->setApplicationValue('logstash.redis.connections', ['name' => ['not_available']]);
+        $this->config->setValue('logstash.redis.connections', ['name' => ['not_available']]);
 
         $this->expectException(TransportNotAvailableExceptionInterface::class);
         $this->expectExceptionMessage("No available connections for Redis");
@@ -46,7 +46,7 @@ class RedisTransportTest extends RedisBaseTest
 
     public function testRetryNotAvailableServer()
     {
-        $this->config->setApplicationValue('logstash.redis.connections', ['name' => ['not_available']]);
+        $this->config->setValue('logstash.redis.connections', ['name' => ['not_available']]);
 
         $transport = $this->getRedisTransport();
         try {

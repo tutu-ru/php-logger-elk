@@ -19,10 +19,10 @@ use TutuRu\LoggerElk\ElkLoggerFactory;
 $loggerFactory = new ElkLoggerFactory();
 $logger = $loggerFactory->getRedisLogger(
     $logName,
-    $configContainer,
+    $config,
     $redisConnectionManager,
     $requestMetadataOrNull,
-    $StatsdExporterClientOrNull
+    $statsdExporterClientOrNull
 );
 ```
 

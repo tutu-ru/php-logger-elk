@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace TutuRu\LoggerElk\Redis;
 
-use TutuRu\Config\ConfigContainer;
+use TutuRu\Config\ConfigInterface;
 
 class RedisTransportConfig
 {
-    /** @var ConfigContainer */
+    /** @var ConfigInterface */
     private $config;
 
 
-    public function __construct(ConfigContainer $config)
+    public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
     }
@@ -25,12 +25,12 @@ class RedisTransportConfig
 
     public function getConnectionNames(): array
     {
-        return (array)$this->config->getValue('logstash.redis.connections.name', []);
+        return (array)$this->config->getValue('logstash.redis.connections.name', false, []);
     }
 
 
     public function getRetryTimeoutForRedisInSec(): int
     {
-        return (int)$this->config->getValue('logstash.retry_timeout_for_redis_in_sec', 3);
+        return (int)$this->config->getValue('logstash.retry_timeout_for_redis_in_sec', false, 3);
     }
 }

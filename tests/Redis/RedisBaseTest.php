@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace TutuRu\Tests\LoggerElk\Redis;
 
-use TutuRu\Config\ConfigContainer;
+use TutuRu\Config\JsonConfig\MutableJsonConfig;
 use TutuRu\LoggerElk\Redis\RedisTransport;
 use TutuRu\LoggerElk\Redis\RedisTransportConfig;
 use TutuRu\Redis\ConnectionManager;
 use TutuRu\Redis\RedisList;
-use TutuRu\Tests\Config\JsonConfig\JsonConfigFactory;
 use TutuRu\Tests\LoggerElk\BaseTest;
 
 abstract class RedisBaseTest extends BaseTest
 {
-    /** @var ConfigContainer */
+    /** @var MutableJsonConfig */
     protected $config;
 
     /** @var ConnectionManager */
@@ -23,7 +22,7 @@ abstract class RedisBaseTest extends BaseTest
     public function setUp()
     {
         parent::setUp();
-        $this->config = JsonConfigFactory::createConfig(__DIR__ . '/configs/app.json', __DIR__ . '/configs/env.json');
+        $this->config = new MutableJsonConfig(__DIR__ . '/configs/app.json');
         $this->connectionManager = new ConnectionManager($this->config);
     }
 

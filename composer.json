@@ -7,7 +7,7 @@
   "prefer-stable": true,
   "require": {
     "psr/log": "^1.0",
-    "tutu-ru/lib-config": "^1.0",
+    "tutu-ru/lib-config": "^2.0",
     "tutu-ru/lib-metrics": "^1.0",
     "tutu-ru/lib-redis": "^1.0",
     "tutu-ru/lib-request-metadata": "^1.0",
