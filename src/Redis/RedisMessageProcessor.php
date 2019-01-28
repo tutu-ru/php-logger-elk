@@ -9,7 +9,8 @@ use TutuRu\RequestMetadata\RequestMetadata;
 
 class RedisMessageProcessor implements MessageProcessorInterface
 {
-    const DATE_FORMAT = 'Y-m-d\TH:i:s.uP';
+    private const DATE_FORMAT = 'Y-m-d\TH:i:s.uP';
+    public const BC_CODE_FIELD = '__log_code__';
 
     /** @var EnvDataProviderInterface */
     private $endDataProvider;
@@ -31,12 +32,13 @@ class RedisMessageProcessor implements MessageProcessorInterface
             '@timestamp' => (new \DateTime())->format(self::DATE_FORMAT),
             'log'        => $log,
             'severity'   => (string)$level,
-            'code'       => (string)($context['code'] ?? ''), //bc
+            'code'       => (string)($context[self::BC_CODE_FIELD] ?? ''), //bc
             'hash'       => $this->endDataProvider->getHash(),
             'host'       => $this->endDataProvider->getHostname(),
             'pid'        => (string)getmypid(),
             'message'    => $this->prepareMessage($message),
         ];
+        unset($context[self::BC_CODE_FIELD]);
 
         if (!is_null($this->requestMetadata)) {
             if ($metadata = $this->requestMetadata->getPlainAttributes()) {

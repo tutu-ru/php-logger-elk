@@ -50,7 +50,7 @@ class RedisMessageProcessorTest extends RedisBaseTest
                     'log'     => 'test',
                     'level'   => 'fire in the hole',
                     'message' => 'last message',
-                    'context' => ['debug' => 1, 'code' => 'bc'],
+                    'context' => ['debug' => 1, '__log_code__' => 'bc'],
                 ],
                 'expected' => [
                     'log'      => 'test',
@@ -59,7 +59,7 @@ class RedisMessageProcessorTest extends RedisBaseTest
                     'message'  => 'last message',
                     'host'     => 'localhost',
                     'pid'      => getmypid(),
-                    'context'  => ['debug' => 1, 'code' => 'bc']
+                    'context'  => ['debug' => 1]
                 ]
             ],
             [

@@ -22,14 +22,17 @@ class ElkLoggerFactory
     private $envDataProvider;
 
 
-    public function __construct()
+    public function __construct(?EnvDataProviderInterface $envDataProvider = null)
     {
-        $this->envDataProvider = new HostnameBasedEnvDataProvider(EnvironmentUtils::getServerHostname());
-        $this->envDataProvider->generateHash();
+        $this->envDataProvider = $envDataProvider;
+        if (is_null($this->envDataProvider)) {
+            $this->envDataProvider = new HostnameBasedEnvDataProvider(EnvironmentUtils::getServerHostname());
+            $this->envDataProvider->generateHash();
+        }
     }
 
 
-    public function getNativeErrorLogger($log, ?RequestMetadata $requestMetadata = null)
+    public function getNativeErrorLogger($log, ?RequestMetadata $requestMetadata = null): ElkLogger
     {
         $transport = new ErrorLogTransport();
         $messageProcessor = new ErrorLogMessageProcessor($this->envDataProvider, $requestMetadata);
@@ -43,7 +46,7 @@ class ElkLoggerFactory
         ConnectionManager $connectionManager,
         ?RequestMetadata $requestMetadata = null,
         ?StatsdExporterClientInterface $statsdExporterClient = null
-    ) {
+    ): ElkLogger {
         $config = new RedisTransportConfig($config);
         $listGroup = $this->getRedisListGroup($connectionManager, $config);
         if (!is_null($statsdExporterClient) && $listGroup instanceof MetricAwareInterface) {

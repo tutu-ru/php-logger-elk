@@ -31,7 +31,7 @@ class RedisLoggerTest extends RedisBaseTest
         $factory = new ElkLoggerFactory();
         $logger = $factory->getRedisLogger('test', $this->config, $this->connectionManager, $requestMetadata);
 
-        $logger->log(LogLevel::WARNING, 'test', ['code' => 'bc']);
+        $logger->log(LogLevel::WARNING, 'test', ['debug' => 1, '__log_code__' => 'bc']);
         $this->assertEquals(1, $this->getRedisLogList('local')->getLength());
         $message = $this->getRedisLogList('local')->pop();
         $data = json_decode($message, true);
@@ -39,7 +39,7 @@ class RedisLoggerTest extends RedisBaseTest
         $this->assertEquals(LogLevel::WARNING, $data['severity']);
         $this->assertEquals('test', $data['log']);
         $this->assertEquals('bc', $data['code']);
-        $this->assertEquals(['code' => 'bc'], $data['context']);
+        $this->assertEquals(['debug' => 1], $data['context']);
         $this->assertEquals(
             [RequestMetadata::ATTR_REQUEST_ID => $requestMetadata->get(RequestMetadata::ATTR_REQUEST_ID)],
             $data['metadata']
