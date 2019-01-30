@@ -48,29 +48,24 @@ class ElkLoggerFactory
         ?StatsdExporterClientInterface $statsdExporterClient = null
     ): ElkLogger {
         $config = new RedisTransportConfig($config);
-        $listGroup = $this->getRedisListGroup($connectionManager, $config);
-        if (!is_null($statsdExporterClient) && $listGroup instanceof MetricAwareInterface) {
-            $listGroup->setStatsdExporterClient($statsdExporterClient);
-        }
-
+        $listGroup = $this->getRedisListGroup($connectionManager, $config, $statsdExporterClient);
         $transport = new RedisTransport($listGroup);
         $messageProcessor = new RedisMessageProcessor($this->envDataProvider, $requestMetadata);
-
-        $logger = new ElkLogger($log, $transport, $messageProcessor);
-        if (!is_null($statsdExporterClient)) {
-            $logger->setStatsdExporterClient($statsdExporterClient);
-        }
-        return $logger;
+        return new ElkLogger($log, $transport, $messageProcessor);
     }
 
 
     private function getRedisListGroup(
         ConnectionManager $connectionManager,
-        RedisTransportConfig $config
+        RedisTransportConfig $config,
+        ?StatsdExporterClientInterface $statsdExporterClient = null
     ): RedisPushListInterface {
         $listGroup = $connectionManager->createHaPushListGroup($config->getListName(), $config->getConnectionNames());
         $listGroup->setRetryTimeout($config->getRetryTimeoutForRedisInSec());
         $listGroup->setGroupName('log_elk_redis');
+        if (!is_null($statsdExporterClient) && $listGroup instanceof MetricAwareInterface) {
+            $listGroup->setStatsdExporterClient($statsdExporterClient);
+        }
         return $listGroup;
     }
 }
