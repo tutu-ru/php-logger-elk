@@ -1,6 +1,7 @@
 {
   "env": {
     "resources": [
+      {"name": "redis", "params": {"port":6380}}
     ]
   },
   "unittest": {
