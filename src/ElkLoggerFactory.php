@@ -10,7 +10,6 @@ use TutuRu\LoggerElk\ErrorLog\ErrorLogTransport;
 use TutuRu\LoggerElk\Redis\RedisMessageProcessor;
 use TutuRu\LoggerElk\Redis\RedisTransport;
 use TutuRu\LoggerElk\Redis\RedisTransportConfig;
-use TutuRu\Metrics\MetricAwareInterface;
 use TutuRu\Metrics\StatsdExporterClientInterface;
 use TutuRu\Redis\ConnectionManager;
 use TutuRu\Redis\RedisPushListInterface;
@@ -63,7 +62,7 @@ class ElkLoggerFactory
         $listGroup = $connectionManager->createHaPushListGroup($config->getListName(), $config->getConnectionNames());
         $listGroup->setRetryTimeout($config->getRetryTimeoutForRedisInSec());
         $listGroup->setGroupName('log_elk_redis');
-        if (!is_null($statsdExporterClient) && $listGroup instanceof MetricAwareInterface) {
+        if (!is_null($statsdExporterClient)) {
             $listGroup->setStatsdExporterClient($statsdExporterClient);
         }
         return $listGroup;
