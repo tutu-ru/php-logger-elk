@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace TutuRu\Tests\LoggerElk\Redis;
+namespace TutuRu\Tests\LoggerElk;
 
 use Psr\Log\LogLevel;
 use TutuRu\LoggerElk\HostnameBasedEnvDataProvider;
-use TutuRu\LoggerElk\Redis\RedisMessageProcessor;
+use TutuRu\LoggerElk\JsonMessageProcessor;
 use TutuRu\RequestMetadata\RequestMetadata;
 use TutuRu\Tests\LoggerElk\Objects\NotStringable;
 use TutuRu\Tests\LoggerElk\Objects\Stringable;
 
-class RedisMessageProcessorTest extends RedisBaseTest
+class JsonMessageProcessorTest extends BaseTest
 {
     /**
      * @dataProvider messageProcessingDataProvider
@@ -20,7 +20,7 @@ class RedisMessageProcessorTest extends RedisBaseTest
      */
     public function testMessageProcessing($data, $expected)
     {
-        $messageProcessor = new RedisMessageProcessor(new HostnameBasedEnvDataProvider('localhost'));
+        $messageProcessor = new JsonMessageProcessor(new HostnameBasedEnvDataProvider('localhost'));
         $result = $messageProcessor->processMessage($data['log'], $data['level'], $data['message'], $data['context']);
         $this->checkLogRecord($result, $expected);
     }
@@ -135,7 +135,7 @@ class RedisMessageProcessorTest extends RedisBaseTest
         $requestMetadata = new RequestMetadata();
         $requestMetadata->init();
 
-        $messageProcessor = new RedisMessageProcessor(new HostnameBasedEnvDataProvider('localhost'), $requestMetadata);
+        $messageProcessor = new JsonMessageProcessor(new HostnameBasedEnvDataProvider('localhost'), $requestMetadata);
         $result = $messageProcessor->processMessage('test', 'info', 'msg', []);
 
         $expected = [
@@ -148,6 +148,47 @@ class RedisMessageProcessorTest extends RedisBaseTest
             'metadata' => [RequestMetadata::ATTR_REQUEST_ID => $requestMetadata->get(RequestMetadata::ATTR_REQUEST_ID)]
         ];
         $this->checkLogRecord($result, $expected);
+    }
+
+
+    public function testSizeLimit()
+    {
+        $requestMetadata = new RequestMetadata();
+        $requestMetadata->init();
+
+        $limit = 1024 * 1024;
+        $messageProcessor = new JsonMessageProcessor(
+            new HostnameBasedEnvDataProvider('localhost'),
+            $requestMetadata,
+            $limit
+        );
+
+        $message = str_repeat("test", 1024 * 1024);
+        $result = $messageProcessor->processMessage('test', 'info', $message, []);
+
+        $this->assertLessThanOrEqual($limit, strlen($result));
+        $resultData = json_decode($result, true);
+
+        $this->assertStringEndsWith("...[cutted]...", $resultData['message']);
+    }
+
+
+    public function testSizeLimitWithoutMessage()
+    {
+        $requestMetadata = new RequestMetadata();
+        $requestMetadata->init();
+
+        $limit = 200;
+        $messageProcessor = new JsonMessageProcessor(
+            new HostnameBasedEnvDataProvider('localhost'),
+            $requestMetadata,
+            $limit
+        );
+
+        $result = $messageProcessor->processMessage('test', 'info', "", []);
+
+        // так как режем только сообщение в данном случае выходим за пределы
+        $this->assertGreaterThan($limit, strlen($result));
     }
 
 

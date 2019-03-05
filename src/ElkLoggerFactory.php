@@ -39,6 +39,17 @@ class ElkLoggerFactory
     }
 
 
+    public function getNativeJsonErrorLogger(
+        $log,
+        ?RequestMetadata $requestMetadata = null,
+        ?int $maxBytes = null
+    ): ElkLogger {
+        $transport = new ErrorLogTransport();
+        $messageProcessor = new JsonMessageProcessor($this->envDataProvider, $requestMetadata, $maxBytes);
+        return new ElkLogger($log, $transport, $messageProcessor);
+    }
+
+
     public function getRedisLogger(
         string $log,
         ConfigInterface $config,
