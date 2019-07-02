@@ -41,7 +41,7 @@ class RedisMessageProcessor implements MessageProcessorInterface
         unset($context[self::BC_CODE_FIELD]);
 
         if (!is_null($this->requestMetadata)) {
-            if ($metadata = $this->requestMetadata->getPlainAttributes()) {
+            if ($metadata = $this->requestMetadata->getLoggableAttributes()) {
                 $data['metadata'] = $metadata;
             }
         }
