@@ -8,7 +8,7 @@
   "require": {
     "psr/log": "^1.0",
     "tutu-ru/lib-config": "^2.0",
-    "tutu-ru/lib-metrics": "^3.0.1",
+    "tutu-ru/lib-metrics": "^2.3",
     "tutu-ru/lib-redis": "^1.1",
     "tutu-ru/lib-request-metadata": "^1.0",
     "php": "^7.1",
