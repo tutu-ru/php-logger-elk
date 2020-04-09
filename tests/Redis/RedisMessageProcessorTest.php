@@ -140,7 +140,7 @@ class RedisMessageProcessorTest extends RedisBaseTest
                     'message'  => 'error',
                     'host'     => 'localhost',
                     'pid'      => getmypid(),
-                    'context'  => ['exception' => ['code' => '123', 'message' => 'Exception']]
+                    'context'  => ['exception.code' => '123', 'exception.message' => 'Exception']
                 ]
             ],
             [
