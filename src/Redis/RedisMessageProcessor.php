@@ -49,7 +49,13 @@ class RedisMessageProcessor implements MessageProcessorInterface
         if (!empty($context)) {
             $data['context'] = [];
             foreach ($context as $key => $value) {
-                $data['context'][(string)$key] = is_scalar($value) ? (string)$value : $this->toJson($value);
+                if ($key === 'exception') {
+                    foreach ($context[$key] as $exKey => $exValue) {
+                        $data['context'][$key][$exKey] = $exValue;
+                    }
+                } else {
+                    $data['context'][(string)$key] = is_scalar($value) ? (string)$value : $this->toJson($value);
+                }
             }
         }
 

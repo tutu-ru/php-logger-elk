@@ -125,6 +125,40 @@ class RedisMessageProcessorTest extends RedisBaseTest
                     'host'     => 'localhost',
                     'pid'      => getmypid(),
                 ]
+            ],
+            [
+                'data'     => [
+                    'log'     => 'test',
+                    'level'   => LogLevel::ERROR,
+                    'message' => 'error',
+                    'context' => ['exception' => ['code' => '123', 'message' => 'Exception']],
+                ],
+                'expected' => [
+                    'log'      => 'test',
+                    'severity' => LogLevel::ERROR,
+                    'code'     => '',
+                    'message'  => 'error',
+                    'host'     => 'localhost',
+                    'pid'      => getmypid(),
+                    'context'  => ['exception' => ['code' => '123', 'message' => 'Exception']]
+                ]
+            ],
+            [
+                'data'     => [
+                    'log'     => 'test',
+                    'level'   => LogLevel::WARNING,
+                    'message' => 'error',
+                    'context' => ['some_object' => ['field1' => 'a', 'field2' => 'b']],
+                ],
+                'expected' => [
+                    'log'      => 'test',
+                    'severity' => LogLevel::WARNING,
+                    'code'     => '',
+                    'message'  => 'error',
+                    'host'     => 'localhost',
+                    'pid'      => getmypid(),
+                    'context'  => ['some_object' => '{"field1":"a","field2":"b"}']
+                ]
             ]
         ];
     }
